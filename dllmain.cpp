@@ -20,12 +20,20 @@ static decltype(SetFilePointerEx) *TrueSetFilePointerEx = SetFilePointerEx;
 static decltype(GetFileType) *TrueGetFileType = GetFileType;
 static decltype(GetFileAttributesW) *TrueGetFileAttributesW = GetFileAttributesW;
 static decltype(GetFileAttributesExW) *TrueGetFileAttributesExW = GetFileAttributesExW;
-// static decltype(MultiByteToWideChar) *TrueMultiByteToWideChar = MultiByteToWideChar;
+static decltype(MultiByteToWideChar) *TrueMultiByteToWideChar = MultiByteToWideChar;
 
 static Config config;
 static std::wstring defaultFont;
 static VFS vfs;
 static HMODULE hDll = NULL;
+static std::unordered_map<std::string, std::string> strings;
+
+void insertString(std::wstring key, std::string value) {
+    std::string jis;
+    if (wchar_util::wstr_to_str(jis, key, 932, 0)) {
+        strings[jis] = value;
+    }
+}
 
 typedef char*(*ConvertWideToMultibyte)(LPSTR result, LPCWSTR source, int cp);
 
@@ -297,7 +305,30 @@ BOOL WINAPI HookedGetFileAttributesExW(LPCWSTR lpFileName, GET_FILEEX_INFO_LEVEL
 //     return TrueMultiByteToWideChar(CodePage, dwFlags, lpMultiByteStr, cbMultiByte, lpWideCharStr, cchWideChar);
 // }
 
+int WINAPI HookedMultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr, int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar) {
+    if (CodePage == 932) {
+        if (lpMultiByteStr) {
+            auto len = cbMultiByte < 0 ? strlen(lpMultiByteStr) : cbMultiByte;
+            std::string tmp(lpMultiByteStr, len);
+            auto finded = strings.find(tmp);
+            if (finded != strings.end()) {
+                auto& s = finded->second;
+                auto re = TrueMultiByteToWideChar(CP_UTF8, dwFlags, s.c_str(), s.length(), lpWideCharStr, cchWideChar);
+                if (lpWideCharStr && re) {
+                    lpWideCharStr[re] = 0;
+                }
+                return re;
+            }
+        }
+    }
+    return TrueMultiByteToWideChar(CodePage, dwFlags, lpMultiByteStr, cbMultiByte, lpWideCharStr, cchWideChar);
+}
+
 extern "C" __declspec(dllexport) void Attach() {
+    /// 文本其实位于 function2
+    /// 但是傻逼SMEE搞了个改文本会导致存档不兼容的奇妙操作
+    insertString(L"寮母を続ける", "继续当宿舍管理员");
+    insertString(L"寮を出て勉強を始める", "搬出宿舍开始学习");
     wchar_t curExe[MAX_PATH];
     GetModuleFileNameW(NULL, curExe, MAX_PATH);
     std::string exe;
@@ -335,7 +366,7 @@ extern "C" __declspec(dllexport) void Attach() {
     DetourAttach(&TrueGetFileType, HookedGetFileType);
     DetourAttach(&TrueGetFileAttributesW, HookedGetFileAttributesW);
     DetourAttach(&TrueGetFileAttributesExW, HookedGetFileAttributesExW);
-    // DetourAttach(&TrueMultiByteToWideChar, HookedMultiByteToWideChar);
+    DetourAttach(&TrueMultiByteToWideChar, HookedMultiByteToWideChar);
     DetourTransactionCommit();
 #if _DEBUG
     while( !::IsDebuggerPresent() )
@@ -360,7 +391,7 @@ extern "C" __declspec(dllexport) void Detach() {
     DetourDetach(&TrueGetFileType, HookedGetFileType);
     DetourDetach(&TrueGetFileAttributesW, HookedGetFileAttributesW);
     DetourDetach(&TrueGetFileAttributesExW, HookedGetFileAttributesExW);
-    // DetourDetach(&TrueMultiByteToWideChar, HookedMultiByteToWideChar);
+    DetourDetach(&TrueMultiByteToWideChar, HookedMultiByteToWideChar);
     DetourTransactionCommit();
 }
 
