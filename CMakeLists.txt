@@ -49,5 +49,5 @@ target_link_libraries(lovepopi_patch utils)
 target_link_libraries(lovepopi_patch zip)
 set_target_properties(lovepopi_patch PROPERTIES OUTPUT_NAME "ラブピカルポッピー！.deepseek-r1")
 
-add_executable(lovepopi-chs WIN32 main.cpp winres.rc ラブピカルポッピー！.deepseek-r1.exe.manifest)
+add_executable(lovepopi-chs WIN32 main.cpp winres.rc exe.manifest)
 set_target_properties(lovepopi-chs PROPERTIES OUTPUT_NAME "ラブピカルポッピー！.deepseek-r1")
