@@ -39,7 +39,7 @@ typedef char*(*ConvertWideToMultibyte)(LPSTR result, LPCWSTR source, int cp);
 
 ConvertWideToMultibyte GetHandle() {
     HMODULE hModule = GetModuleHandleA(NULL);
-    return (ConvertWideToMultibyte)((char*)hModule + 0xf58c0);
+    return (ConvertWideToMultibyte)((char*)hModule + 0xf6030);
 }
 
 static ConvertWideToMultibyte h = nullptr;
@@ -327,8 +327,12 @@ int WINAPI HookedMultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMult
 extern "C" __declspec(dllexport) void Attach() {
     /// 文本其实位于 function2
     /// 但是傻逼SMEE搞了个改文本会导致存档不兼容的奇妙操作
-    insertString(L"寮母を続ける", "继续当宿舍管理员");
-    insertString(L"寮を出て勉強を始める", "搬出宿舍开始学习");
+    insertString(L"選択「希来」", "选择「希来」");
+    insertString(L"選択「涼花」", "选择「凉花」");
+    insertString(L"選択「美卯」", "选择「美卯」");
+    insertString(L"選択「珠祈」", "选择「珠祈」");
+    insertString(L"選択「綾子」", "选择「绫子」");
+    insertString(L"選択「たんぽぽ」", "选择「蒲公英」");
     wchar_t curExe[MAX_PATH];
     GetModuleFileNameW(NULL, curExe, MAX_PATH);
     std::string exe;

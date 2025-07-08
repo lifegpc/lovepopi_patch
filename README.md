@@ -3,7 +3,7 @@
 ### CMake
 ```powershell
 md build && cd build
-cmake -A Win32 ../
+cmake -A x64 ../
 cmake --build . --config Release
 ```
 ### Meson

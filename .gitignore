@@ -1,4 +1,3 @@
-build/
-builddir/
+build*/
 .vscode/
 *.zip

@@ -9,9 +9,9 @@ void ShowErrorMsg(LPCWSTR text) {
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
     // 要启动的进程名
-    const wchar_t* processName = L"ラブピカルポッピー！.exe";
+    const wchar_t* processName = L"ドカイチャ！！ラブピカルポッピー！.exe";
     // 要注入的 DLL 路径
-    const wchar_t* dllPath = L"ラブピカルポッピー！.deepseek-r1.dll";
+    const wchar_t* dllPath = L"ドカイチャ！！ラブピカルポッピー！.deepseek-r1.dll";
 
     // 启动进程
     STARTUPINFOW si;

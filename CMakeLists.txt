@@ -47,7 +47,7 @@ add_library(lovepopi_patch SHARED dllmain.cpp config.hpp config.cpp vfs.hpp vfs.
 target_link_libraries(lovepopi_patch "${DETOURS_LIB}")
 target_link_libraries(lovepopi_patch utils)
 target_link_libraries(lovepopi_patch zip)
-set_target_properties(lovepopi_patch PROPERTIES OUTPUT_NAME "ラブピカルポッピー！.deepseek-r1")
+set_target_properties(lovepopi_patch PROPERTIES OUTPUT_NAME "ドカイチャ！！ラブピカルポッピー！.deepseek-r1")
 
 add_executable(lovepopi-chs WIN32 main.cpp winres.rc exe.manifest)
-set_target_properties(lovepopi-chs PROPERTIES OUTPUT_NAME "ラブピカルポッピー！.deepseek-r1")
+set_target_properties(lovepopi-chs PROPERTIES OUTPUT_NAME "ドカイチャ！！ラブピカルポッピー！.deepseek-r1")
